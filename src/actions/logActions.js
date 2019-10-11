@@ -1,4 +1,4 @@
-import { GET_LOGS , SET_LOADING, LOGS_ERROR } from './types';
+import { GET_LOGS , SET_LOADING, LOGS_ERROR, ADD_LOG } from './types';
 
 // redux thunk allows us to return a function directly
 // export const getLogs = () => {
@@ -15,7 +15,8 @@ import { GET_LOGS , SET_LOADING, LOGS_ERROR } from './types';
 //     };
 // };
 
-export const getLogs = () => asynch dispatch => {
+// Get logs from server
+export const getLogs = () => async dispatch => {
     try {
         setLoading();
 
@@ -31,6 +32,32 @@ export const getLogs = () => asynch dispatch => {
             type: LOGS_ERROR,
             payload: err.response.data
         });
+    }
+};
+
+// Add new log
+export const addLog = log => async dispatch => {
+    try {
+      setLoading();
+  
+      const res = await fetch('/logs', {
+        method: 'POST',
+        body: JSON.stringify(log),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await res.json();
+  
+      dispatch({
+        type: ADD_LOG,
+        payload: data
+      });
+    } catch (err) {
+      dispatch({
+        type: LOGS_ERROR,
+        payload: err.response.data
+      });
     }
 };
 
